@@ -88,6 +88,9 @@ async searchOpeningName(query: string) : Promise<Result<OutOpening[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async searchOpeningLines(query: string) : Promise<OpeningLine[]> {
+    return await TAURI_INVOKE("search_opening_lines", { query });
+},
 async getOpeningFromFen(fen: string) : Promise<Result<string, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_opening_from_fen", { fen }) };
@@ -487,6 +490,7 @@ progressEvent: "progress-event"
 
 /** user-defined types **/
 
+export type OpeningLine = { name: string; eco: string; pgn: string }
 export type AnalysisOptions = { fen: string; moves: string[]; annotateNovelties: boolean; referenceDb: string | null; reversed: boolean }
 export type BestMoves = { nodes: number; depth: number; score: Score; uciMoves: string[]; sanMoves: string[]; multipv: number; nps: number }
 export type BestMovesPayload = { bestLines: BestMoves[]; engine: string; tab: string; fen: string; moves: string[]; progress: number }

@@ -37,7 +37,7 @@
       "../sound/": "sound/"
     },
     "targets": "all",
-    "createUpdaterArtifacts": "v1Compatible"
+    "createUpdaterArtifacts": false
   },
   "build": {
     "beforeDevCommand": "pnpm start-vite",
@@ -45,7 +45,7 @@
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420"
   },
-  "productName": "en-croissant",
+  "productName": "En Croissant FV",
   "mainBinaryName": "en-croissant",
   "identifier": "org.encroissant.app",
   "plugins": {
@@ -60,16 +60,14 @@
     },
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDdGOTBFNjg2MzFGM0RDODUKUldTRjNQTXhodWFRZjc2MTNVeXRONGJkRjdGUXlCeW1MSlZESUczT0U4eE5hKzBmY3M2S0U2L0oK",
-      "endpoints": [
-        "https://www.encroissant.org/updates"
-      ]
+      "endpoints": []
     }
   },
   "app": {
     "withGlobalTauri": false,
     "windows": [
       {
-        "title": "En Croissant",
+        "title": "En Croissant FV",
         "visible": false,
         "decorations": true
       }

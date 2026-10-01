@@ -1,6 +1,7 @@
 import { AppShell } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { createRootRouteWithContext, Outlet, useNavigate } from "@tanstack/react-router";
+import { getName } from "@tauri-apps/api/app";
 import { TauriEvent } from "@tauri-apps/api/event";
 import { Menu, MenuItem, PredefinedMenuItem, Submenu } from "@tauri-apps/api/menu";
 import { appLogDir, resolve } from "@tauri-apps/api/path";
@@ -115,6 +116,13 @@ function RootLayout() {
   }, [navigate, setActiveTab, setTabs, t]);
 
   const checkForUpdates = useCallback(async () => {
+    if ((await getName()) === "En Croissant FV") {
+      await message(
+        "En Croissant FV is updated from your custom project. Official updates are disabled to preserve your custom features.",
+        { title: "En Croissant FV" },
+      );
+      return;
+    }
     const update = await check();
     if (update) {
       const yes = await ask("Do you want to install the new version now?", {

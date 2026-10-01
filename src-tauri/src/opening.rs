@@ -22,6 +22,60 @@ pub struct OutOpening {
     fen: String,
 }
 
+#[derive(Debug, Clone, Type, Serialize)]
+pub struct OpeningLine {
+    pub name: String,
+    pub eco: String,
+    pub pgn: String,
+}
+
+/// Search named standard-chess lines, including variation names and ECO codes.
+/// Position-only entries (such as Chess960 setups) cannot be replayed as a line.
+#[tauri::command]
+#[specta::specta]
+pub fn search_opening_lines(query: String) -> Vec<OpeningLine> {
+    let query = query
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+        .to_lowercase();
+    if query.is_empty() {
+        return Vec::new();
+    }
+    let words = query.split_whitespace().collect::<Vec<_>>();
+    let mut matches = OPENINGS
+        .iter()
+        .filter(|opening| opening.pgn.is_some())
+        .filter(|opening| {
+            let searchable = format!("{} {}", opening._eco, opening.name).to_lowercase();
+            words.iter().all(|word| searchable.contains(word))
+        })
+        .collect::<Vec<_>>();
+    matches.sort_by_key(|opening| {
+        let name = opening.name.to_lowercase();
+        let rank = if name == query {
+            0
+        } else if name.starts_with(&query) {
+            1
+        } else {
+            2
+        };
+        (rank, opening.pgn.as_ref().map_or(0, |pgn| pgn.len()), name)
+    });
+    matches
+        .into_iter()
+        .take(50)
+        .map(|opening| OpeningLine {
+            name: opening.name.clone(),
+            eco: opening._eco.clone(),
+            pgn: opening
+                .pgn
+                .clone()
+                .expect("filtered to openings with moves"),
+        })
+        .collect()
+}
+
 #[derive(Deserialize)]
 struct OpeningRecord {
     eco: String,
@@ -171,6 +225,42 @@ lazy_static! {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn search_variation_returns_complete_replayable_line() {
+        let results = search_opening_lines("  HAXO  ".into());
+        let haxo = results
+            .iter()
+            .find(|line| line.name == "Scotch Game: Haxo Gambit")
+            .unwrap();
+        assert_eq!(haxo.eco, "C44");
+        assert_eq!(haxo.pgn, "1. e4 e5 2. Nf3 Nc6 3. d4 exd4 4. Bc4 Bc5");
+        let mut position = Chess::default();
+        let mut count = 0;
+        for token in haxo.pgn.split_whitespace() {
+            if let Ok(san) = token.parse::<San>() {
+                position.play_unchecked(&san.to_move(&position).unwrap());
+                count += 1;
+            }
+        }
+        assert_eq!(count, 8);
+        assert_eq!(
+            get_opening_from_setup(position.into_setup(EnPassantMode::Legal)).unwrap(),
+            haxo.name
+        );
+    }
+
+    #[test]
+    fn search_matches_words_and_eco_without_position_only_entries() {
+        let results = search_opening_lines("c44  scotch haxo".into());
+        assert_eq!(results.len(), 1);
+        assert!(search_opening_lines("   ".into()).is_empty());
+        assert!(search_opening_lines("no-such-opening".into()).is_empty());
+        assert!(search_opening_lines("Starting Position".into()).is_empty());
+        let scotch = search_opening_lines("Scotch Game".into());
+        assert_eq!(scotch[0].name, "Scotch Game");
+        assert!(scotch.len() <= 50);
+    }
 
     #[test]
     fn test_get_opening() {

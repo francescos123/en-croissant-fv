@@ -1,0 +1,42 @@
+En Croissant FV — custom project
+
+Based on En Croissant 0.15.1, upstream commit 23f83142fcbd4d3af60a524855defe8c9a5703fe.
+Source: https://github.com/franciscoBSalgueiro/en-croissant
+License: GPL-3.0-only (see LICENSE).
+
+Use
+1. Open a new tab and click Explore openings.
+2. Search by opening name, variation name (for example Haxo), or ECO code.
+3. Select a result to preview its moves.
+4. Click Open opening line to replay it from the initial position.
+   Or select Save as a new repertoire, choose a name and colour, and create it.
+
+The FV app uses the existing En Croissant account/settings profile and game
+databases (org.encroissant.app), plus the normal EnCroissant documents folder.
+The original app is kept as Old En Croissant.app. Use one app at a time, because
+they share settings and data. Official binary updates are disabled in FV so
+they cannot overwrite custom features. Update the source and rebuild instead.
+
+Project: ~/Documents/EnCroissantFV
+Installed app: /Applications/En Croissant FV.app
+GitHub fork: https://github.com/francescos123/en-croissant-fv
+Original source remains available through the upstream Git remote.
+
+Build
+pnpm install --frozen-lockfile
+pnpm exec tauri build --bundles app -- --locked
+
+Verification
+pnpm test
+pnpm lint
+cargo test --locked opening::tests --manifest-path src-tauri/Cargo.toml
+
+Verified locally on 1 October 2026
+- 43 frontend tests passed, including full-line replay and saved orientation.
+- 3 native opening tests passed.
+- Type checking and production build passed.
+- Lint: no errors; 52 existing project warnings.
+- On-screen: searched Haxo and C44 Haxo, replayed all 8 moves, saved
+  Scotch Game - Haxo Gambit, and reopened it from Files with practice available.
+- Initial feature verification used the temporary En Croissant Openings build.
+  The permanent installed build is named En Croissant FV.

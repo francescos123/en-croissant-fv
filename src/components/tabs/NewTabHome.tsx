@@ -27,6 +27,7 @@ import { createTab } from "@/utils/tabs";
 import { unwrap } from "@/utils/unwrap";
 import CreateRepertoireModal from "./CreateRepertoireModal";
 import ImportModal from "./ImportModal";
+import OpenOpeningModal from "./OpenOpeningModal";
 import classes from "./NewTabHome.module.css";
 import {
   IconChess,
@@ -109,6 +110,7 @@ export default function NewTabHome({ id }: { id: string }) {
 
   const [openModal, setOpenModal] = useState(false);
   const [openRepertoireModal, setOpenRepertoireModal] = useState(false);
+  const [openOpeningModal, setOpenOpeningModal] = useState(false);
   const [, setTabs] = useAtom(tabsAtom);
   const setActiveTab = useSetAtom(activeTabAtom);
 
@@ -252,7 +254,13 @@ export default function NewTabHome({ id }: { id: string }) {
         setActiveTab={setActiveTab}
       />
       <CreateRepertoireModal opened={openRepertoireModal} setOpened={setOpenRepertoireModal} />
+      {openOpeningModal && <OpenOpeningModal opened onClose={() => setOpenOpeningModal(false)} />}
       <Stack gap="lg" pt="sm">
+        <Group justify="flex-end">
+          <Button variant="default" onClick={() => setOpenOpeningModal(true)}>
+            {t("Openings.Title")}
+          </Button>
+        </Group>
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 5 }}>
           {cards.map((card) => (
             <Card shadow="sm" p="lg" radius="md" withBorder key={card.title}>

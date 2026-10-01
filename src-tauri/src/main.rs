@@ -68,6 +68,7 @@ use crate::{
     fs::{download_file, file_exists, get_file_metadata},
     opening::{
         get_opening_from_fen, get_opening_from_fens, get_opening_from_name, search_opening_name,
+        search_opening_lines,
     },
 };
 use std::sync::atomic::AtomicBool;
@@ -120,6 +121,7 @@ fn main() {
             memory_size,
             get_puzzle,
             search_opening_name,
+            search_opening_lines,
             get_opening_from_fen,
             get_opening_from_fens,
             get_opening_from_name,

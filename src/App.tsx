@@ -56,7 +56,7 @@ const colorSchemeManager = localStorageColorSchemeManager({
   key: "mantine-color-scheme",
 });
 
-import { getVersion } from "@tauri-apps/api/app";
+import { getName, getVersion } from "@tauri-apps/api/app";
 import { ask } from "@tauri-apps/plugin-dialog";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { check } from "@tauri-apps/plugin-updater";
@@ -118,6 +118,7 @@ declare module "@tanstack/react-router" {
 
 const checkForUpdates = async () => {
   try {
+    if ((await getName()) === "En Croissant FV") return;
     const update = await check();
     if (update) {
       const yes = await ask("Do you want to install the new version now?", {

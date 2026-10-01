@@ -40,3 +40,37 @@ Verified locally on 1 October 2026
   Scotch Game - Haxo Gambit, and reopened it from Files with practice available.
 - Initial feature verification used the temporary En Croissant Openings build.
   The permanent installed build is named En Croissant FV.
+
+Add a played line to a repertoire
+1. In the analysis move list/tree, right-click the last move you want to keep.
+2. Choose Add to Repertoire, then choose an existing repertoire.
+3. Review the attachment point and number of new moves, then click Add.
+
+The selected line ends at the clicked move; later moves and sibling variations
+are not imported. Matching uses the chess position (pieces, turn, castling and
+legal en-passant rights), ignoring move counters. The declared training start
+is preferred; otherwise the earliest shared position at or below that start
+is used. If multiple branches match, select the branch explicitly. A repertoire
+starting on the initial board can accept any legal line from that board.
+
+Existing moves, main-line order, comments, headers and training progress stay
+intact. New branches are appended. Duplicate lines are detected. Open clean tabs
+are refreshed; unsaved changes must be saved first. The native save checks that
+the PGN has not changed, creates a hidden .before-add-*.bak file beside it, and
+atomically replaces the PGN. Metadata and training records are not rewritten.
+
+Validation for repertoire merging
+- Position matching, custom FEN roots, marked training starts, transpositions,
+  ambiguous branches, duplicate lines, comments, multiple games, move counters,
+  castling/turn/en-passant differences, and invalid starts/illegal moves.
+- Real move-tree extraction stops at the clicked move on a side variation.
+- Inactive tabs refresh through the same queued session storage as live edits.
+- Native tests cover exact backups, unchanged metadata and stale-write refusal.
+- 54 frontend tests passed; 2 native merge-save tests passed.
+- Type checking and lint passed (52 existing warnings, no errors).
+- Native UI check: right-clicked Haxo's Bc5, selected a temporary repertoire
+  marked to start after Nc6, added 4 moves, and verified its already-open tab
+  refreshed with the original Bb5/a6 main line and comment still present.
+- Verified the exact pre-merge backup and unchanged .info metadata.
+- Installed the updated FV bundle without closing the user's active session;
+  the new menu becomes available after quitting and reopening En Croissant FV.

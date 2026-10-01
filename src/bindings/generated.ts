@@ -88,6 +88,14 @@ async searchOpeningName(query: string) : Promise<Result<OutOpening[], string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async saveRepertoireMerge(filePath: string, expected: string, updated: string) : Promise<Result<string, string>> {
+    try {
+        return { status: "ok", data: await TAURI_INVOKE("save_repertoire_merge", { filePath, expected, updated }) };
+    } catch (e) {
+        if (e instanceof Error) throw e;
+        return { status: "error", error: e as string };
+    }
+},
 async searchOpeningLines(query: string) : Promise<OpeningLine[]> {
     return await TAURI_INVOKE("search_opening_lines", { query });
 },

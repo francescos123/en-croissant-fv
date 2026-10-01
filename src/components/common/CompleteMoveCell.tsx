@@ -5,6 +5,7 @@ import {
   IconChevronsUp,
   IconChevronUp,
   IconCopy,
+  IconBook,
   IconFlag,
   IconX,
 } from "@tabler/icons-react";
@@ -17,9 +18,10 @@ import { useStoreWithEqualityFn } from "zustand/traditional";
 import Comment from "@/components/common/Comment";
 import { currentTabAtom } from "@/state/atoms";
 import type { Annotation } from "@/utils/annotation";
-import { hasMorePriority, stripClock } from "@/utils/chess";
+import { getPGN, hasMorePriority, stripClock } from "@/utils/chess";
 import { getTabFile } from "@/utils/tabs";
 import { type TreeNode, treeIterator } from "@/utils/treeReducer";
+import AddToRepertoireModal from "./AddToRepertoireModal";
 import MoveCell from "./MoveCell";
 import { TreeStateContext } from "./TreeStateContext";
 
@@ -104,6 +106,7 @@ function CompleteMoveCell({
     setOpen(false);
   });
   const [open, setOpen] = useState(false);
+  const [repertoireLine, setRepertoireLine] = useState<string | null>(null);
   const currentTab = useAtomValue(currentTabAtom);
   const tabFile = getTabFile(currentTab);
 
@@ -179,6 +182,25 @@ function CompleteMoveCell({
                 </Menu.Item>
 
                 <Menu.Item
+                  leftSection={<IconBook size="0.875rem" />}
+                  onClick={() => {
+                    setOpen(false);
+                    setRepertoireLine(
+                      getPGN(store.getState().root, {
+                        headers: null,
+                        comments: true,
+                        extraMarkups: true,
+                        glyphs: true,
+                        variations: false,
+                        path: movePath,
+                      }),
+                    );
+                  }}
+                >
+                  {t("Repertoire.Add")}
+                </Menu.Item>
+
+                <Menu.Item
                   color="red"
                   leftSection={<IconX size="0.875rem" />}
                   onClick={() => deleteMove(movePath)}
@@ -197,6 +219,9 @@ function CompleteMoveCell({
           </Tooltip>
         )}
       </Box>
+      {repertoireLine !== null && (
+        <AddToRepertoireModal sourcePgn={repertoireLine} onClose={() => setRepertoireLine(null)} />
+      )}
       {showComments && !tableLayout && comment && <Comment comment={comment} />}
     </>
   );

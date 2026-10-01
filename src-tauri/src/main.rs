@@ -17,6 +17,8 @@ mod pgn;
 mod progress;
 mod puzzle;
 mod sound;
+mod repertoire;
+use repertoire::save_repertoire_merge;
 
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
@@ -122,6 +124,7 @@ fn main() {
             get_puzzle,
             search_opening_name,
             search_opening_lines,
+            save_repertoire_merge,
             get_opening_from_fen,
             get_opening_from_fens,
             get_opening_from_name,
